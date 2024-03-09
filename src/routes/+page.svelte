@@ -1,11 +1,20 @@
 <script lang="ts">
 	let text = '';
 	let encoded = '';
+	let byte = '';
 	let showCopiedMessage = false;
 
-	function encode() {
+	function encode(): string {
 		// ゼロ幅スペースを挿入する関数
-		encoded = text.split('').join('\u200b');
+		return text.split('').join('\u200b');
+	}
+	// バイト数を計算
+	function countBytes(str: string) {
+		byte = `${encodeURI(str).split(/%..|./).length - 1} Bytes`;
+	}
+	function onClicked() {
+		encoded = encode();
+		countBytes(encoded);
 	}
 	function copyToClipboard() {
 		navigator.clipboard
@@ -24,6 +33,7 @@
 
 <main class="max-w-lg mx-auto p-4">
 	<h1 class="text-3xl font-bold underline text-blue-900 mb-4">検索除けツール</h1>
+	<p>ゼロ幅スペース(U+200B zero width space)を使用して検索除け用の文章に変換を行います</p>
 	<textarea
 		class="w-full p-2 border-2 border-gray-300 rounded shadow-inner resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500"
 		bind:value={text}
@@ -33,7 +43,7 @@
 	<div class="flex space-x-2 mt-4">
 		<button
 			class="bg-indigo-700 text-white py-2 px-4 rounded font-semibold transition duration-300 ease-in-out hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-			on:click={encode}>変換</button
+			on:click={onClicked}>変換</button
 		>
 		<button
 			class="bg-indigo-700 text-white py-2 px-4 rounded font-semibold transition duration-300 ease-in-out hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -43,6 +53,7 @@
 	<pre
 		class="mt-4 p-4 rounded-lg shadow overflow-auto font-mono text-sm leading-normal">{encoded}
 	</pre>
+	<p>{byte}</p>
 	{#if showCopiedMessage}
 		<div class="copied-message animate-bounce">コピーしました</div>
 	{/if}
